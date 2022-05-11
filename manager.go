@@ -476,15 +476,17 @@ func SendNearLogicSuperIP() {
 					V:    one.IdInfo.V,
 					Sign: one.IdInfo.Sign,
 				}
+
 				nodeOne := go_protos.Node{
 					IdInfo:    &idinfo,
-					IsSuper:   one.IsSuper,
+					IsSuper:   one.GetIsSuper(),
 					Addr:      one.Addr,
 					TcpPort:   uint32(one.TcpPort),
 					IsApp:     one.IsApp,
 					MachineID: one.MachineID,
 					Version:   one.Version,
 				}
+
 				nodeRepeated.Nodes = append(nodeRepeated.Nodes, &nodeOne)
 			}
 

@@ -3,6 +3,7 @@ package nodeStore
 import (
 	"bytes"
 	"encoding/binary"
+	"sync/atomic"
 	"time"
 
 	"github.com/gogo/protobuf/proto"
@@ -18,7 +19,7 @@ import (
 */
 type Node struct {
 	IdInfo               IdInfo    `json:"idinfo"`  //节点id信息，id字符串以16进制显示
-	IsSuper              bool      `json:"issuper"` //是不是超级节点，超级节点有外网ip地址，可以为其他节点提供代理服务
+	IsSuper              uint32    `json:"issuper"` //是不是超级节点，超级节点有外网ip地址，可以为其他节点提供代理服务
 	Addr                 string    `json:"addr"`    //外网ip地址
 	TcpPort              uint16    `json:"tcpport"` //TCP端口
 	IsApp                bool      `json:"isapp"`   //是不是手机端节点
@@ -30,7 +31,27 @@ type Node struct {
 
 func (this *Node) FlashOnlineTime() {
 	this.lastContactTimestamp = time.Now()
+}
 
+/*
+	获取这个节点是否是超级节点
+*/
+func (this *Node) GetIsSuper() bool {
+	if atomic.LoadUint32(&this.IsSuper) == 1 {
+		return true
+	}
+	return false
+}
+
+/*
+	获取这个节点是否是超级节点
+*/
+func (this *Node) SetIsSuper(isSuper bool) {
+	if isSuper {
+		atomic.StoreUint32(&this.IsSuper, 1)
+	} else {
+		atomic.StoreUint32(&this.IsSuper, 0)
+	}
 }
 
 // func (this *Node) Marshal() []byte {
@@ -52,7 +73,7 @@ func (this *Node) Proto() ([]byte, error) {
 
 	node := go_protos.Node{
 		IdInfo:    &idinfo,
-		IsSuper:   this.IsSuper,
+		IsSuper:   this.GetIsSuper(),
 		Addr:      this.Addr,
 		TcpPort:   uint32(this.TcpPort),
 		IsApp:     this.IsApp,
@@ -102,9 +123,14 @@ func ParseNodeProto(bs []byte) (*Node, error) {
 		Sign: nodep.IdInfo.Sign,
 	}
 
+	isSuper := uint32(0)
+	if nodep.GetIsSuper() {
+		isSuper = 1
+	}
+
 	node := Node{
 		IdInfo:    idinfo,
-		IsSuper:   nodep.IsSuper,
+		IsSuper:   isSuper,
 		Addr:      nodep.Addr,
 		TcpPort:   uint16(nodep.TcpPort),
 		IsApp:     nodep.IsApp,
@@ -143,10 +169,14 @@ func ParseNodesProto(bs *[]byte) ([]Node, error) {
 			V:    nodep.IdInfo.V,
 			Sign: nodep.IdInfo.Sign,
 		}
+		isSuper := uint32(0)
+		if nodep.GetIsSuper() {
+			isSuper = 1
+		}
 
 		node := Node{
 			IdInfo:    idinfo,
-			IsSuper:   nodep.IsSuper,
+			IsSuper:   isSuper,
 			Addr:      nodep.Addr,
 			TcpPort:   uint16(nodep.TcpPort),
 			IsApp:     nodep.IsApp,

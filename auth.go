@@ -64,7 +64,7 @@ func (this *Auth) SendKey(conn net.Conn, session engine.Session, name string) (r
 	//第一次连接，向对方发送自己的Node
 	node := &nodeStore.Node{
 		IdInfo:  nodeStore.NodeSelf.IdInfo,
-		IsSuper: false, //自己是否是超级节点，对方会判断，这里只需要虚心的说自己不是超级节点
+		IsSuper: 0, //自己是否是超级节点，对方会判断，这里只需要虚心的说自己不是超级节点
 		Addr:    nodeStore.NodeSelf.Addr,
 		TcpPort: nodeStore.NodeSelf.TcpPort,
 		Version: config.Version_1,
@@ -156,7 +156,7 @@ func (this *Auth) SendKey(conn net.Conn, session engine.Session, name string) (r
 
 	// fmt.Println("添加一个node", node.IdInfo.Id.B58String())
 	//能直接通过ip地址访问的节点，一定是超级节点。
-	node.IsSuper = true
+	node.IsSuper = 1
 
 	// fmt.Println("添加一个node之后", node.IdInfo.Id.B58String())
 	//接收对方判断自己是否是超级节点
@@ -195,9 +195,11 @@ func (this *Auth) SendKey(conn net.Conn, session engine.Session, name string) (r
 	isSuperInt := binary.LittleEndian.Uint16(isSuperBs)
 	//	isSuperInt = 1
 	if isSuperInt == 1 {
-		nodeStore.NodeSelf.IsSuper = true
+		// nodeStore.NodeSelf.IsSuper = true
+		nodeStore.NodeSelf.SetIsSuper(true)
 	} else {
-		nodeStore.NodeSelf.IsSuper = false
+		// nodeStore.NodeSelf.IsSuper = false
+		nodeStore.NodeSelf.SetIsSuper(false)
 	}
 	err = nil
 
@@ -334,6 +336,9 @@ func (this *Auth) RecvKey(conn net.Conn, name string) (remoteName string, err er
 		return "", errors.New("Connect yourself, disconnect yourself")
 	}
 
+	// nodeStore.NodeSelf.IsSuper = true
+	nodeStore.NodeSelf.SetIsSuper(true)
+
 	//检查这个链接是否已经存在
 	// remoteName = node.IdInfo.Id.B58String()
 	remoteName = utils.Bytes2string(node.IdInfo.Id) // node.IdInfo.Id.B58String()
@@ -384,7 +389,7 @@ func (this *Auth) RecvKey(conn net.Conn, name string) (remoteName string, err er
 	// fmt.Println("RecvKey", strings.Split(conn.RemoteAddr().String(), ":")[0], conn.RemoteAddr().Network())
 
 	//连接自己，又说自己是超级节点的，直接断开连接
-	if node.IsSuper {
+	if node.GetIsSuper() {
 		//这是一个验证是否有公网ip地址的超级节点的连接
 		err = errors.New("This is a super node connection to verify whether there is a public IP address")
 		return
@@ -437,7 +442,8 @@ func (this *Auth) RecvKey(conn net.Conn, name string) (remoteName string, err er
 	// fmt.Println("判断对方是不是超级节点")
 	//判断对方是否能链接上
 	isSuper := TryConn(node)
-	node.IsSuper = isSuper
+	// node.IsSuper = isSuper
+	node.SetIsSuper(isSuper)
 	// fmt.Println("对方是不是超级节点", isSuper)
 
 	buf = bytes.NewBuffer(nil)
@@ -522,7 +528,7 @@ func TryConn(srcNode *nodeStore.Node) bool {
 	//第一次连接，向对方发送自己的Node
 	node := &nodeStore.Node{
 		IdInfo:  nodeStore.NodeSelf.IdInfo,
-		IsSuper: true,
+		IsSuper: 1,
 		Addr:    nodeStore.NodeSelf.Addr,
 		TcpPort: nodeStore.NodeSelf.TcpPort,
 		Version: config.Version_1,

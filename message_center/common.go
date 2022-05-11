@@ -1,18 +1,17 @@
 package message_center
 
 import (
-	"github.com/prestonTao/libp2parea/config"
-	"github.com/prestonTao/libp2parea/engine"
-	"github.com/prestonTao/libp2parea/nodeStore"
-	"github.com/prestonTao/libp2parea/utils"
-	"github.com/prestonTao/libp2parea/virtual_node"
-	"github.com/prestonTao/libp2parea/protos/go_protos"
 	"bytes"
-	"fmt"
 	"sync"
 	"time"
 
 	"github.com/gogo/protobuf/proto"
+	"github.com/prestonTao/libp2parea/config"
+	"github.com/prestonTao/libp2parea/engine"
+	"github.com/prestonTao/libp2parea/nodeStore"
+	"github.com/prestonTao/libp2parea/protos/go_protos"
+	"github.com/prestonTao/libp2parea/utils"
+	"github.com/prestonTao/libp2parea/virtual_node"
 )
 
 const MsgCacheTimeOver = 60 * 60 * 24
@@ -83,7 +82,7 @@ type MessageHead struct {
 }
 
 func NewMessageHead(recvid, recvSuperid *nodeStore.AddressNet, accurate bool) *MessageHead {
-	if nodeStore.NodeSelf.IsSuper {
+	if nodeStore.NodeSelf.GetIsSuper() {
 		//		head := NewMessageHead(nil, nil, nil, nodeStore.NodeSelf.IdInfo.Id, false)
 		return &MessageHead{
 			RecvId:        recvid,                        //接收者id
@@ -107,7 +106,7 @@ func NewMessageHead(recvid, recvSuperid *nodeStore.AddressNet, accurate bool) *M
 	创建一个虚拟节点消息
 */
 func NewMessageHeadVnode(sendVid, recvVid *virtual_node.AddressNetExtend, accurate bool) *MessageHead {
-	if nodeStore.NodeSelf.IsSuper {
+	if nodeStore.NodeSelf.GetIsSuper() {
 		//		head := NewMessageHead(nil, nil, nil, nodeStore.NodeSelf.IdInfo.Id, false)
 		return &MessageHead{
 			// RecvId:        recvid,                        //接收者id
@@ -396,14 +395,14 @@ func (this *Message) Send(version uint64) (ok bool) {
 
 		//没有可用的邻居节点
 		if targetId == nil {
-			fmt.Println("没有可用的邻居节点")
+			// fmt.Println("没有可用的邻居节点")
 			return true
 		}
 
-		fmt.Println("打印地址", (targetId).B58String())
+		// fmt.Println("打印地址", (targetId).B58String())
 		vnodeinfo := virtual_node.FindVnodeinfo(targetId)
 		if vnodeinfo == nil {
-			fmt.Println("没有可用的邻居节点")
+			// fmt.Println("没有可用的邻居节点")
 			return false
 		}
 		this.Head.RecvId = &vnodeinfo.Nid
@@ -411,7 +410,7 @@ func (this *Message) Send(version uint64) (ok bool) {
 
 	}
 
-	// fmt.Println("发送消息1", this.Head)
+	// engine.Log.Info("发送消息1")
 	return this.sendNormal(version)
 
 }
@@ -422,13 +421,14 @@ func (this *Message) Send(version uint64) (ok bool) {
 func (this *Message) sendNormal(version uint64) bool {
 	//安全协议不需buildhash
 	this.BuildHash()
-	if nodeStore.NodeSelf.IsSuper {
+	if nodeStore.NodeSelf.GetIsSuper() {
 		// if version == debuf_msgid {
 		// 	fmt.Println("-=-=- 111111111111")
 		// }
 		//收消息人就是自己
 		// if nodeStore.NodeSelf.IdInfo.Id.B58String() == this.Head.RecvId.B58String() {
 		if bytes.Equal(nodeStore.NodeSelf.IdInfo.Id, *this.Head.RecvId) {
+			// engine.Log.Info("发送消息1111111111")
 			return false
 		}
 		// if version == debuf_msgid {
@@ -448,8 +448,9 @@ func (this *Message) sendNormal(version uint64) bool {
 				mheadBs := this.Head.Proto()
 				mbodyBs := this.Body.Proto()
 				session.Send(version, &mheadBs, &mbodyBs, false)
+				// engine.Log.Info("发送消息 222222222222")
 			} else {
-				// fmt.Println("这个代理节点的链接断开了")
+				// engine.Log.Info("这个代理节点的链接断开了")
 			}
 			return true
 		}
@@ -510,7 +511,7 @@ func (this *Message) sendNormal(version uint64) bool {
 		// 	fmt.Println("-=-=- 22222222222")
 		// }
 		if nodeStore.SuperPeerId == nil {
-			// fmt.Println("没有可用的超级节点")
+			// engine.Log.Info("没有可用的超级节点")
 			return true
 		}
 		// if session, ok := engine.GetSession(nodeStore.SuperPeerId.B58String()); ok {
@@ -518,10 +519,16 @@ func (this *Message) sendNormal(version uint64) bool {
 			// session.Send(version, this.Head.JSON(), this.Body.JSON(), false)
 			mheadBs := this.Head.Proto()
 			mbodyBs := this.Body.Proto()
-			session.Send(version, &mheadBs, &mbodyBs, false)
+			err := session.Send(version, &mheadBs, &mbodyBs, false)
+			if err != nil {
+				// engine.Log.Info("send message error:%s", err.Error())
+			} else {
+				// engine.Log.Info("send success")
+			}
+
 			// session.Send(version, this.Head.Proto(), this.Body.Proto(), false)
 		} else {
-			// fmt.Println("超级节点的session未找到")
+			// engine.Log.Info("超级节点的session未找到")
 		}
 		return true
 	}
@@ -660,7 +667,7 @@ func (this *Message) IsSendOther(form *nodeStore.AddressNet) bool {
 	// 	this.Head.Accurate = true
 	// }
 	ok := IsSendToOtherSuperToo(this.Head, this.DataPlus, this.msgid, form)
-	// engine.Log.Info("打印消息2 %v", this.Body)
+	// engine.Log.Info("打印消息2 %t", ok)
 	//将messageHead.Accurate参数恢复
 	// messageHead.Accurate = oldAccurate
 
@@ -791,7 +798,7 @@ func (this *Message) Reply(version uint64) bool {
 	this.BuildReplyHash(this.Body.CreateTime, this.Body.Hash, this.Body.SendRand)
 	//TODO 这里对消息加密
 
-	if nodeStore.NodeSelf.IsSuper {
+	if nodeStore.NodeSelf.GetIsSuper() {
 		// return IsSendToOtherSuperToo(this.Head, this.Body.JSON(), version, nil)
 		mbodyBs := this.Body.Proto()
 		return IsSendToOtherSuperToo(this.Head, &mbodyBs, version, nil)

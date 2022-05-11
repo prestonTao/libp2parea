@@ -2,9 +2,9 @@ module peer2
 
 go 1.18
 
-// replace github.com/prestonTao/keystore => ../../../keystore
+replace github.com/prestonTao/keystore => ../../../keystore
 
-// replace github.com/prestonTao/libp2parea => ../../
+replace github.com/prestonTao/libp2parea => ../../
 
 require (
 	github.com/prestonTao/keystore v0.0.0-00010101000000-000000000000

@@ -23,7 +23,8 @@ func AutoRole() bool {
 	//本地地址是全球唯一公网地址
 	if utils.IsOnlyIp(config.Init_LocalIP) {
 		config.Init_IsGlobalOnlyAddress = true
-		nodeStore.NodeSelf.IsSuper = true
+		// nodeStore.NodeSelf.IsSuper = true
+		nodeStore.NodeSelf.SetIsSuper(true)
 		nodeStore.NodeSelf.Addr = config.Init_LocalIP
 		nodeStore.NodeSelf.TcpPort = config.Init_LocalPort
 		engine.Log.Debug("本机ip是公网全球唯一地址")
@@ -34,9 +35,11 @@ func AutoRole() bool {
 		nodeStore.NodeSelf.Addr = config.Init_GatewayAddress
 		nodeStore.NodeSelf.TcpPort = config.Init_GatewayPort
 
-		nodeStore.NodeSelf.IsSuper = true
+		// nodeStore.NodeSelf.IsSuper = true
+		nodeStore.NodeSelf.SetIsSuper(true)
 	} else {
-		nodeStore.NodeSelf.IsSuper = false
+		// nodeStore.NodeSelf.IsSuper = false
+		nodeStore.NodeSelf.SetIsSuper(false)
 	}
 	return true
 

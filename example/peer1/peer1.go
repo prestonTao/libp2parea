@@ -6,7 +6,8 @@ import (
 
 	"github.com/prestonTao/keystore"
 	"github.com/prestonTao/libp2parea"
-	"github.com/prestonTao/libp2parea/config"
+
+	// "github.com/prestonTao/libp2parea/config"
 	"github.com/prestonTao/libp2parea/engine"
 	mc "github.com/prestonTao/libp2parea/message_center"
 	"github.com/prestonTao/libp2parea/nodeStore"
@@ -30,15 +31,15 @@ func start() {
 	}
 
 	//
-	config.SetNetType(config.NetType_test)
+	// config.SetNetType(config.NetType_test)
 
 	addr := "127.0.0.1"
-	port := uint16(19980)
+	port := uint16(29980)
 
 	libp2parea.Start(true, addr, port, keyPath, addrPre, pwd)
 	InitHandler()
 	go sendMsg()
-	time.Sleep(time.Hour)
+	time.Sleep(time.Hour * 999999)
 }
 
 const msg_text = 1000

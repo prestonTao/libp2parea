@@ -1,11 +1,12 @@
 package message_center
 
 import (
+	"bytes"
+	"fmt"
+
 	"github.com/prestonTao/libp2parea/engine"
 	"github.com/prestonTao/libp2parea/nodeStore"
 	"github.com/prestonTao/libp2parea/utils"
-	"bytes"
-	"fmt"
 )
 
 /*
@@ -32,14 +33,14 @@ func IsSendToOtherSuperToo(messageHead *MessageHead, dataplus *[]byte, version u
 	recvSuperId := messageHead.RecvSuperId
 	recvId := messageHead.RecvId
 
-	if !nodeStore.NodeSelf.IsSuper {
+	if !nodeStore.NodeSelf.GetIsSuper() {
 		if bytes.Equal(nodeStore.NodeSelf.IdInfo.Id, *recvId) {
 			sendOk = false
 			return
 		} else {
 			if messageHead.Accurate {
 				//发错节点了
-				// fmt.Println("发错节点了", nodeStore.NodeSelf.IdInfo.Id.B58String(), recvSuperId.B58String(), recvId.B58String())
+				engine.Log.Info("发错节点了 %s %s %s", nodeStore.NodeSelf.IdInfo.Id.B58String(), recvSuperId.B58String(), recvId.B58String())
 				return true
 			} else {
 				// if session, ok := engine.GetSession(nodeStore.SuperPeerId.B58String()); ok {
@@ -47,11 +48,17 @@ func IsSendToOtherSuperToo(messageHead *MessageHead, dataplus *[]byte, version u
 					updateAccurate()
 					// session.Send(version, messageHead.JSON(), dataplus, false)
 					mheadBs := messageHead.Proto()
-					session.Send(version, &mheadBs, dataplus, false)
+					err := session.Send(version, &mheadBs, dataplus, false)
+					if err == nil {
+						engine.Log.Info("send success")
+					} else {
+						engine.Log.Info("send error:%s", err.Error())
+					}
 				}
-				if version == debuf_msgid {
-					fmt.Println("发送给超级节点")
-				}
+				// if version == debuf_msgid {
+				// 	fmt.Println("发送给超级节点")
+				// }
+				engine.Log.Info("发送给超级节点")
 				return true
 			}
 		}
@@ -61,11 +68,15 @@ func IsSendToOtherSuperToo(messageHead *MessageHead, dataplus *[]byte, version u
 		//fmt.Println("----000000000", recvId.B58String(), recvSuperId.B58String(), nodeStore.NodeSelf.IdInfo.Id.B58String())
 		// fmt.Println("----000000000", form.B58String())
 	}
+	engine.Log.Info("11111111111")
 	if bytes.Equal(*recvId, *recvSuperId) {
+		engine.Log.Info("11111111111")
 		if bytes.Equal(*recvId, nodeStore.NodeSelf.IdInfo.Id) {
+			engine.Log.Info("11111111111")
 			sendOk = false
 			return
 		} else {
+			engine.Log.Info("11111111111")
 			if version == debuf_msgid {
 				//fmt.Println("----1111111")
 			}
@@ -75,6 +86,7 @@ func IsSendToOtherSuperToo(messageHead *MessageHead, dataplus *[]byte, version u
 				// fmt.Println("----222222222", form.B58String())
 			}
 			if bytes.Equal(*targetId, nodeStore.NodeSelf.IdInfo.Id) {
+				engine.Log.Info("查找自己的代理节点")
 				//查找代理节点
 				// _, ok := nodeStore.GetProxyNode(recvId.B58String())
 				_, ok := nodeStore.GetProxyNode(utils.Bytes2string(*recvId))
@@ -82,11 +94,13 @@ func IsSendToOtherSuperToo(messageHead *MessageHead, dataplus *[]byte, version u
 					//fmt.Println("----333333333")
 				}
 				if ok {
+					engine.Log.Info("发生给自己的子节点")
 					//发送给代理节点
 					// if session, ok := engine.GetSession(recvId.B58String()); ok {
 					if session, ok := engine.GetSession(utils.Bytes2string(*recvId)); ok {
+						engine.Log.Info("发送出去了111")
 						if version == debuf_msgid {
-							fmt.Println("发送出去了111")
+							engine.Log.Info("发送出去了111")
 						}
 						updateAccurate()
 						// session.Send(version, messageHead.JSON(), dataplus, false)
@@ -94,12 +108,14 @@ func IsSendToOtherSuperToo(messageHead *MessageHead, dataplus *[]byte, version u
 						session.Send(version, &mheadBs, dataplus, false)
 						// session.Send(version, messageHead.Proto(), dataplus, false)
 					} else {
+						engine.Log.Info("这个链接断开了")
 						//这个链接断开了
 						if version == debuf_msgid {
 							fmt.Println("这个链接断开了")
 						}
 					}
 				} else {
+					engine.Log.Info("该节点不在线")
 					if !messageHead.Accurate {
 						sendOk = false
 						return
@@ -128,6 +144,7 @@ func IsSendToOtherSuperToo(messageHead *MessageHead, dataplus *[]byte, version u
 				session.Send(version, &mheadBs, dataplus, false)
 				// session.Send(version, messageHead.Proto(), dataplus, false)
 			} else {
+				engine.Log.Info("这个链接断开了")
 				if version == debuf_msgid {
 					fmt.Println("这个链接断开了222")
 				}
@@ -139,15 +156,18 @@ func IsSendToOtherSuperToo(messageHead *MessageHead, dataplus *[]byte, version u
 		if version == debuf_msgid {
 			//fmt.Println("4444444444", recvId, recvSuperId)
 		}
+		engine.Log.Info("11111111111")
 		return true
 
 	} else {
-
+		engine.Log.Info("11111111111")
 		if bytes.Equal(nodeStore.NodeSelf.IdInfo.Id, *recvSuperId) {
 			if recvId == nil {
+				engine.Log.Info("11111111111")
 				sendOk = false
 				return
 			} else {
+				engine.Log.Info("11111111111")
 				if version == debuf_msgid {
 					//fmt.Println("----444444444")
 				}
@@ -165,8 +185,10 @@ func IsSendToOtherSuperToo(messageHead *MessageHead, dataplus *[]byte, version u
 						// session.Send(version, messageHead.JSON(), dataplus, false)
 						mheadBs := messageHead.Proto()
 						session.Send(version, &mheadBs, dataplus, false)
+						engine.Log.Info("11111111111")
 						// session.Send(version, messageHead.Proto(), dataplus, false)
 					} else {
+						engine.Log.Info("11111111111")
 						if version == debuf_msgid {
 							fmt.Println("这个session不存在")
 						}
@@ -176,12 +198,14 @@ func IsSendToOtherSuperToo(messageHead *MessageHead, dataplus *[]byte, version u
 				if version == debuf_msgid {
 					//fmt.Println("22222222")
 				}
+				engine.Log.Info("11111111111")
 				return true
 			}
 		}
 		if version == debuf_msgid {
 			//fmt.Println("----6666666666")
 		}
+		engine.Log.Info("11111111111")
 		targetId := nodeStore.FindNearInSuper(messageHead.RecvSuperId, form, true)
 		if version == debuf_msgid {
 			//fmt.Println("----777777777777")
@@ -195,8 +219,10 @@ func IsSendToOtherSuperToo(messageHead *MessageHead, dataplus *[]byte, version u
 				if version == debuf_msgid {
 					//fmt.Println("33333333")
 				}
+				engine.Log.Info("11111111111")
 				return true
 			} else {
+				engine.Log.Info("11111111111")
 				sendOk = false
 				return
 			}
@@ -205,6 +231,7 @@ func IsSendToOtherSuperToo(messageHead *MessageHead, dataplus *[]byte, version u
 		// session, ok := engine.GetSession(targetId.B58String())
 		session, ok := engine.GetSession(utils.Bytes2string(*targetId))
 		if ok {
+			engine.Log.Info("11111111111")
 			updateAccurate()
 			// session.Send(version, messageHead.JSON(), dataplus, false)
 			mheadBs := messageHead.Proto()
@@ -214,6 +241,7 @@ func IsSendToOtherSuperToo(messageHead *MessageHead, dataplus *[]byte, version u
 		if version == debuf_msgid {
 			//fmt.Println("5555555555", recvId, recvSuperId)
 		}
+		engine.Log.Info("11111111111")
 		return true
 	}
 

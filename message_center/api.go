@@ -627,13 +627,13 @@ func SendP2pMsg(msgid uint64, recvid *nodeStore.AddressNet, content *[]byte) (*M
 		return nil, false, true
 	}
 	//TODO 这里查询缓存中的节点信息，拿到节点的超级节点信息
-	// fmt.Println("发送未加密消息 1111111111111", msgid)
+	// engine.Log.Info("发送未加密消息 1111111111111 msgid:%d", msgid)
 	head := NewMessageHead(recvid, recvid, true)
 	body := NewMessageBody(msgid, content, 0, nil, 0)
 	message := NewMessage(head, body)
 	message.BuildHash()
 	ok := message.Send(version_p2p)
-	// fmt.Println("发送未加密消息 2222222222222", msgid, ok)
+	// engine.Log.Info("发送未加密消息 2222222222222 msgid:%d ok:%t", msgid, ok)
 	return message, ok, false
 }
 
@@ -696,23 +696,23 @@ func SendP2pMsgHE(msgid uint64, recvid *nodeStore.AddressNet, content *[]byte) (
 	v, ok := securityStore.Load(utils.Bytes2string(*recvid))
 	if ratchet == nil || !ok {
 
-		// fmt.Println("============ 发送加密消息 11111")
+		// engine.Log.Info("============ 发送加密消息 11111")
 		//发送获取节点信息消息
 		//获取对方身份公钥
 		message, ok, _ := SendP2pMsg(config.MSGID_SearchAddr, recvid, nil)
 		// bs := flood.WaitRequest(config.CLASS_security_searchAddr, hex.EncodeToString(message.Body.Hash), 0)
 		bs, _ := flood.WaitRequest(config.CLASS_security_searchAddr, utils.Bytes2string(message.Body.Hash), 0)
 		if bs == nil {
-			// fmt.Println("============ 发送加密消息 22222")
+			// engine.Log.Info("============ 发送加密消息 22222")
 			return nil, false, false
 		}
 		// fmt.Println("============ 发送加密消息 33333333")
 		sni, err := ParserSearchNodeInfo(*bs)
 		if err != nil {
-			// fmt.Println("============ 发送加密消息 4444444")
+			// engine.Log.Info("============ 发送加密消息 4444444")
 			return nil, false, false
 		}
-		// fmt.Println("============ 发送加密消息 55555555")
+		// engine.Log.Info("============ 发送加密消息 55555555")
 
 		//生成3个密钥，通过共享密钥加密发送两个密钥
 		// ivRand, err := crypto.Rand32Byte()
@@ -730,13 +730,13 @@ func SendP2pMsgHE(msgid uint64, recvid *nodeStore.AddressNet, content *[]byte) (
 		if err != nil {
 			return nil, false, false
 		}
-		// fmt.Println("============ 发送加密消息 666666666")
+		// engine.Log.Info("============ 发送加密消息 666666666")
 		//使用随机数生成一个密钥对
 		sharedHkaDH, err := dh.GenerateKeyPair(sharedHkaRand[:])
 		if err != nil {
 			return nil, false, false
 		}
-		// fmt.Println("============ 发送加密消息 7777777777")
+		// engine.Log.Info("============ 发送加密消息 7777777777")
 		//生成一个共享密钥Hka
 		sharedHka := dh.KeyExchange(dh.NewDHPair(sharedHkaDH.GetPrivateKey(), sni.CPuk))
 
@@ -747,13 +747,13 @@ func SendP2pMsgHE(msgid uint64, recvid *nodeStore.AddressNet, content *[]byte) (
 		if err != nil {
 			return nil, false, false
 		}
-		// fmt.Println("============ 发送加密消息 88888888")
+		// engine.Log.Info("============ 发送加密消息 88888888")
 		//使用随机数生成一个密钥对
 		sharedNhkbDH, err := dh.GenerateKeyPair(sharedNhkbRand[:])
 		if err != nil {
 			return nil, false, false
 		}
-		// fmt.Println("============ 发送加密消息 99999")
+		// engine.Log.Info("============ 发送加密消息 99999")
 		//使用自己的私钥和对方公钥生成共享密钥Nhkb
 		sharedNhkb := dh.KeyExchange(dh.NewDHPair(sharedNhkbDH.GetPrivateKey(), sni.CPuk))
 
@@ -774,7 +774,7 @@ func SendP2pMsgHE(msgid uint64, recvid *nodeStore.AddressNet, content *[]byte) (
 		if err != nil {
 			return nil, false, false
 		}
-		// fmt.Println("============ 发送加密消息 101010")
+		// engine.Log.Info("============ 发送加密消息 101010")
 		//给对方发送自己的公钥，用于创建加密通道消息
 		message, ok = SendP2pMsgEX(config.MSGID_security_create_pipe, sni.Id, sni.SuperId, bs)
 		if !ok {
@@ -783,23 +783,23 @@ func SendP2pMsgHE(msgid uint64, recvid *nodeStore.AddressNet, content *[]byte) (
 			// bs := flood.WaitRequest(config.CLASS_im_security_create_pipe, hex.EncodeToString(message.Body.Hash), 0)
 			bs, _ := flood.WaitRequest(config.CLASS_im_security_create_pipe, utils.Bytes2string(message.Body.Hash), 0)
 			if bs == nil {
-				// fmt.Println("============ 发送加密消息 1010101022222")
+				// engine.Log.Info("============ 发送加密消息 1010101022222")
 				return nil, false, false
 			}
 		}
-		// fmt.Println("============ 发送加密消息 111111112222222")
+		// engine.Log.Info("============ 发送加密消息 111111112222222")
 		err = sessionManager.AddSendPipe(*sni.Id, sk, sharedHka, sharedNhkb)
 		if err != nil {
 			return nil, false, false
 		}
-		// fmt.Println("============ 发送加密消息 22222222221111111")
+		// engine.Log.Info("============ 发送加密消息 22222222221111111")
 		//
 		securityStore.Store(utils.Bytes2string(*recvid), sni)
 	}
-	// fmt.Println("============ 发送加密消息 22222")
+	// engine.Log.Info("============ 发送加密消息 22222")
 	v, ok = securityStore.Load(utils.Bytes2string(*recvid))
 	if !ok {
-		// fmt.Println("============ 发送加密消息 333333")
+		// engine.Log.Info("============ 发送加密消息 333333")
 		return nil, false, false
 	}
 	sni := v.(*SearchNodeInfo)
@@ -808,10 +808,10 @@ func SendP2pMsgHE(msgid uint64, recvid *nodeStore.AddressNet, content *[]byte) (
 	//先将内容加密
 	ratchet = sessionManager.GetSendRatchet(*sni.Id)
 	if ratchet == nil {
-		// fmt.Println("============ 发送加密消息 5555555")
+		// engine.Log.Info("============ 发送加密消息 5555555")
 		return nil, false, false
 	}
-	// fmt.Println("============ 发送加密消息 6666666")
+	// engine.Log.Info("============ 发送加密消息 6666666")
 
 	msgHE := ratchet.RatchetEncrypt(*content, nil)
 	buf := bytes.NewBuffer(nil)
@@ -828,7 +828,7 @@ func SendP2pMsgHE(msgid uint64, recvid *nodeStore.AddressNet, content *[]byte) (
 	message := NewMessage(head, body)
 	message.BuildHash()
 	ok = message.Send(version_p2pHE)
-	// fmt.Println("============ 发送加密消息 33333333333")
+	// engine.Log.Info("============ 发送加密消息 33333333333")
 	return message, ok, false
 }
 

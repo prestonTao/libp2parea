@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/prestonTao/libp2parea/config"
-
 	"github.com/prestonTao/keystore"
 	"github.com/prestonTao/libp2parea"
+
+	// "github.com/prestonTao/libp2parea/config"
 	"github.com/prestonTao/libp2parea/engine"
 	mc "github.com/prestonTao/libp2parea/message_center"
 	"github.com/prestonTao/libp2parea/nodeStore"
@@ -31,10 +31,10 @@ func start() {
 	}
 
 	//
-	config.SetNetType(config.NetType_test)
+	// config.SetNetType(config.NetType_test)
 
 	addr := "127.0.0.1"
-	port := uint16(19981)
+	port := uint16(29981)
 
 	libp2parea.Start(true, addr, port, keyPath, addrPre, pwd)
 	InitHandler()
@@ -58,8 +58,8 @@ func sendMsg() {
 	// return
 
 	for range time.NewTicker(time.Second * 5).C {
-		msg, sendOk, isSelf := libp2parea.SendP2pMsgHE(msg_text, &peer3ID, &content)
-		engine.Log.Info("发送消息%v %t %t", msg, sendOk, isSelf)
+		libp2parea.SendP2pMsgHE(msg_text, &peer3ID, &content)
+		// engine.Log.Info("发送消息%v %t %t", msg, sendOk, isSelf)
 	}
 }
 

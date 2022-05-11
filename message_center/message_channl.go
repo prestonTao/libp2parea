@@ -3,6 +3,10 @@ package message_center
 import (
 	"bytes"
 	"errors"
+	"runtime"
+	"sync"
+	"time"
+
 	"github.com/prestonTao/libp2parea/config"
 	"github.com/prestonTao/libp2parea/engine"
 	"github.com/prestonTao/libp2parea/message_center/flood"
@@ -10,9 +14,6 @@ import (
 	"github.com/prestonTao/libp2parea/protos/go_protos"
 	"github.com/prestonTao/libp2parea/sqlite3_db"
 	"github.com/prestonTao/libp2parea/utils"
-	"runtime"
-	"sync"
-	"time"
 
 	"github.com/gogo/protobuf/proto"
 )
@@ -248,7 +249,7 @@ func (this *MsgHolder) GetMulticastMsg() {
 
 	//继续广播给其他节点
 	// engine.Log.Info("同步到了广播消息")
-	if nodeStore.NodeSelf.IsSuper {
+	if nodeStore.NodeSelf.GetIsSuper() {
 		//广播给其他超级节点
 		utils.Go(func() {
 			goroutineId := utils.GetRandomDomain() + utils.TimeFormatToNanosecondStr()

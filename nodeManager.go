@@ -1,20 +1,21 @@
 package libp2parea
 
 import (
+	"bytes"
+	"strconv"
+	"sync"
+	"time"
+
 	"github.com/prestonTao/libp2parea/config"
 	gconfig "github.com/prestonTao/libp2parea/config"
 	"github.com/prestonTao/libp2parea/engine"
 	"github.com/prestonTao/libp2parea/message_center"
 	"github.com/prestonTao/libp2parea/message_center/flood"
 	"github.com/prestonTao/libp2parea/nodeStore"
-	"github.com/prestonTao/libp2parea/utils"
-	"github.com/prestonTao/libp2parea/virtual_node/manager"
 	"github.com/prestonTao/libp2parea/protos/go_protos"
 	"github.com/prestonTao/libp2parea/sqlite3_db"
-	"bytes"
-	"strconv"
-	"sync"
-	"time"
+	"github.com/prestonTao/libp2parea/utils"
+	"github.com/prestonTao/libp2parea/virtual_node/manager"
 	// jsoniter "github.com/json-iterator/go"
 )
 
@@ -237,7 +238,7 @@ func MulticastOnline_recv(c engine.Controller, msg engine.Packet, message *messa
 	// nodeStore.AddNode(newNode)
 
 	//非超级节点判断超级节点是否改变
-	if !nodeStore.NodeSelf.IsSuper {
+	if !nodeStore.NodeSelf.GetIsSuper() {
 		nearId := nodeStore.FindNearInSuper(&nodeStore.NodeSelf.IdInfo.Id, nil, false)
 		//		nearIdStr := hex.EncodeToString(nearId)
 		// fmt.Println("判断是否需要替换超级节点", nearId.B58String(), nodeStore.SuperPeerId.B58String())
@@ -323,7 +324,7 @@ func GetNearSuperAddr(c engine.Controller, msg engine.Packet, message *message_c
 		}
 		nodeOne := go_protos.Node{
 			IdInfo:    &idinfo,
-			IsSuper:   one.IsSuper,
+			IsSuper:   one.GetIsSuper(),
 			Addr:      one.Addr,
 			TcpPort:   uint32(one.TcpPort),
 			IsApp:     one.IsApp,
@@ -425,7 +426,7 @@ func GetNearSuperAddr_recv(c engine.Controller, msg engine.Packet, message *mess
 		// nodeStore.AddNode(newNode)
 
 		//非超级节点判断超级节点是否改变
-		if !nodeStore.NodeSelf.IsSuper {
+		if !nodeStore.NodeSelf.GetIsSuper() {
 			nearId := nodeStore.FindNearInSuper(&nodeStore.NodeSelf.IdInfo.Id, nil, false)
 			//		nearIdStr := hex.EncodeToString(nearId)
 			// fmt.Println("判断是否需要替换超级节点", nearId.B58String(), nodeStore.SuperPeerId.B58String())

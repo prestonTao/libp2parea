@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"fmt"
+
 	"github.com/prestonTao/libp2parea/config"
 	"github.com/prestonTao/libp2parea/engine"
 	"github.com/prestonTao/libp2parea/message_center/flood"
@@ -381,10 +382,13 @@ func p2pHandler(c engine.Controller, msg engine.Packet) {
 	// 	return
 	// }
 
+	// engine.Log.Info("控制器收到点对点消息 111111")
+
 	message, err := ParserMessageProto(msg.Data, msg.Dataplus, msg.MsgID)
 	if err != nil {
 		return
 	}
+	// engine.Log.Info("控制器收到点对点消息 2222222")
 
 	// fmt.Println("head", string(msg.Data), string(msg.Dataplus))
 	// message, err := ParserMessage(&msg.Data, &msg.Dataplus, msg.MsgID)
@@ -396,7 +400,7 @@ func p2pHandler(c engine.Controller, msg engine.Packet) {
 	// form := nodeStore.AddressFromB58String(msg.Session.GetName())
 	form := nodeStore.AddressNet([]byte(msg.Session.GetName()))
 	if message.IsSendOther(&form) {
-		// fmt.Println("收到点对点控制消息 发送给其他人")
+		// engine.Log.Info("收到点对点控制消息 发送给其他人")
 		return
 	}
 	//解析包体内容
@@ -414,7 +418,7 @@ func p2pHandler(c engine.Controller, msg engine.Packet) {
 	//自己处理
 	h := router.GetHandler(message.Body.MessageId)
 	if h == nil {
-		fmt.Println("This p2p message is not registered:", message.Body.MessageId)
+		// fmt.Println("This p2p message is not registered:", message.Body.MessageId)
 		return
 	}
 	h(c, msg, message)
@@ -494,7 +498,7 @@ func p2pHEHandler(c engine.Controller, msg engine.Packet) {
 	//自己处理
 	h := router.GetHandler(message.Body.MessageId)
 	if h == nil {
-		fmt.Println("This p2pHE message is not registered:", message.Body.MessageId)
+		// fmt.Println("This p2pHE message is not registered:", message.Body.MessageId)
 		return
 	}
 	h(c, msg, message)
