@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"runtime"
 	"sync"
 
 	"github.com/prestonTao/keystore"
@@ -15,8 +14,8 @@ import (
 	"github.com/prestonTao/libp2parea/message_center/flood"
 	"github.com/prestonTao/libp2parea/nodeStore"
 	"github.com/prestonTao/libp2parea/sqlite3_db"
-	"github.com/prestonTao/libp2parea/utils"
 	"github.com/prestonTao/libp2parea/virtual_node"
+	"github.com/prestonTao/utils"
 	// jsoniter "github.com/json-iterator/go"
 )
 
@@ -65,10 +64,10 @@ func SendNeighborMsg(msgid uint64, recvid *nodeStore.AddressNet, content *[]byte
 	对某个消息回复
 */
 func SendNeighborReplyMsg(message *Message, msgid uint64, content *[]byte, session engine.Session) error {
-	goroutineId := utils.GetRandomDomain() + utils.TimeFormatToNanosecondStr()
-	_, file, line, _ := runtime.Caller(0)
-	engine.AddRuntime(file, line, goroutineId)
-	defer engine.DelRuntime(file, line, goroutineId)
+	// goroutineId := utils.GetRandomDomain() + utils.TimeFormatToNanosecondStr()
+	// _, file, line, _ := runtime.Caller(0)
+	// engine.AddRuntime(file, line, goroutineId)
+	// defer engine.DelRuntime(file, line, goroutineId)
 
 	head := NewMessageHead(message.Head.Sender, message.Head.SenderSuperId, true)
 	// engine.Log.Info("看看是哪个指针为空 %v", message.Body)
@@ -679,10 +678,10 @@ var securityStore = new(sync.Map)
 	@return    bool         消息是发给自己
 */
 func SendP2pMsgHE(msgid uint64, recvid *nodeStore.AddressNet, content *[]byte) (*Message, bool, bool) {
-	goroutineId := utils.GetRandomDomain() + utils.TimeFormatToNanosecondStr()
-	_, file, line, _ := runtime.Caller(0)
-	engine.AddRuntime(file, line, goroutineId)
-	defer engine.DelRuntime(file, line, goroutineId)
+	// goroutineId := utils.GetRandomDomain() + utils.TimeFormatToNanosecondStr()
+	// _, file, line, _ := runtime.Caller(0)
+	// engine.AddRuntime(file, line, goroutineId)
+	// defer engine.DelRuntime(file, line, goroutineId)
 	if bytes.Equal(nodeStore.NodeSelf.IdInfo.Id, *recvid) {
 		return nil, false, true
 	}
@@ -778,6 +777,7 @@ func SendP2pMsgHE(msgid uint64, recvid *nodeStore.AddressNet, content *[]byte) (
 		//给对方发送自己的公钥，用于创建加密通道消息
 		message, ok = SendP2pMsgEX(config.MSGID_security_create_pipe, sni.Id, sni.SuperId, bs)
 		if !ok {
+			// engine.Log.Info("============ 发送加密消息 1010101022222")
 			return nil, false, false
 		} else {
 			// bs := flood.WaitRequest(config.CLASS_im_security_create_pipe, hex.EncodeToString(message.Body.Hash), 0)
@@ -790,6 +790,7 @@ func SendP2pMsgHE(msgid uint64, recvid *nodeStore.AddressNet, content *[]byte) (
 		// engine.Log.Info("============ 发送加密消息 111111112222222")
 		err = sessionManager.AddSendPipe(*sni.Id, sk, sharedHka, sharedNhkb)
 		if err != nil {
+			// engine.Log.Info("============ 发送加密消息 1010101022222")
 			return nil, false, false
 		}
 		// engine.Log.Info("============ 发送加密消息 22222222221111111")

@@ -3,7 +3,7 @@ package raft
 import (
 	// "fmt"
 	"github.com/prestonTao/libp2parea/nodeStore"
-	"github.com/prestonTao/libp2parea/utils"
+	"github.com/prestonTao/utils"
 	"math/rand"
 	"strconv"
 	"time"

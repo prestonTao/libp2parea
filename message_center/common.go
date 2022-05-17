@@ -10,8 +10,8 @@ import (
 	"github.com/prestonTao/libp2parea/engine"
 	"github.com/prestonTao/libp2parea/nodeStore"
 	"github.com/prestonTao/libp2parea/protos/go_protos"
-	"github.com/prestonTao/libp2parea/utils"
 	"github.com/prestonTao/libp2parea/virtual_node"
+	"github.com/prestonTao/utils"
 )
 
 const MsgCacheTimeOver = 60 * 60 * 24
@@ -395,14 +395,14 @@ func (this *Message) Send(version uint64) (ok bool) {
 
 		//没有可用的邻居节点
 		if targetId == nil {
-			// fmt.Println("没有可用的邻居节点")
+			// engine.Log.Info("没有可用的邻居节点")
 			return true
 		}
 
 		// fmt.Println("打印地址", (targetId).B58String())
 		vnodeinfo := virtual_node.FindVnodeinfo(targetId)
 		if vnodeinfo == nil {
-			// fmt.Println("没有可用的邻居节点")
+			// engine.Log.Info("没有可用的邻居节点")
 			return false
 		}
 		this.Head.RecvId = &vnodeinfo.Nid
@@ -467,7 +467,7 @@ func (this *Message) sendNormal(version uint64) bool {
 		}
 		// fmt.Println("本节点的其他超级节点", msgId, nodeStore.GetAllNodes(), targetId.B58String())
 		if targetId == nil {
-			//fmt.Println("没有可用的邻居节点")
+			// engine.Log.Info("没有可用的邻居节点")
 			return true
 		}
 		// if version == debuf_msgid {
@@ -514,6 +514,9 @@ func (this *Message) sendNormal(version uint64) bool {
 			// engine.Log.Info("没有可用的超级节点")
 			return true
 		}
+
+		// engine.Log.Info("超级节点id:%s", nodeStore.SuperPeerId.B58String())
+
 		// if session, ok := engine.GetSession(nodeStore.SuperPeerId.B58String()); ok {
 		if session, ok := engine.GetSession(utils.Bytes2string(*nodeStore.SuperPeerId)); ok {
 			// session.Send(version, this.Head.JSON(), this.Body.JSON(), false)
@@ -521,7 +524,7 @@ func (this *Message) sendNormal(version uint64) bool {
 			mbodyBs := this.Body.Proto()
 			err := session.Send(version, &mheadBs, &mbodyBs, false)
 			if err != nil {
-				// engine.Log.Info("send message error:%s", err.Error())
+				engine.Log.Info("send message error:%s", err.Error())
 			} else {
 				// engine.Log.Info("send success")
 			}

@@ -5,7 +5,7 @@ import (
 	"github.com/prestonTao/libp2parea/engine"
 	mc "github.com/prestonTao/libp2parea/message_center"
 	"github.com/prestonTao/libp2parea/nodeStore"
-	"github.com/prestonTao/libp2parea/utils"
+	"github.com/prestonTao/utils"
 )
 
 func RaftVote(c engine.Controller, msg engine.Packet) {

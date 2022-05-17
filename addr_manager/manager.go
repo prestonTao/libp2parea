@@ -13,7 +13,7 @@ import (
 	gconfig "github.com/prestonTao/libp2parea/config"
 	"github.com/prestonTao/libp2parea/engine"
 	"github.com/prestonTao/libp2parea/nodeStore"
-	"github.com/prestonTao/libp2parea/utils"
+	"github.com/prestonTao/utils"
 )
 
 var (

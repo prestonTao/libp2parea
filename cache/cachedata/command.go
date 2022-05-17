@@ -8,7 +8,7 @@ import (
 	// "fmt"
 	mc "github.com/prestonTao/libp2parea/message_center"
 	"github.com/prestonTao/libp2parea/nodeStore"
-	"github.com/prestonTao/libp2parea/utils"
+	"github.com/prestonTao/utils"
 )
 
 //获取1/4节点id

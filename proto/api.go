@@ -1,7 +1,7 @@
 package proto
 
 import (
-	"github.com/prestonTao/libp2parea/utils"
+	"github.com/prestonTao/utils"
 )
 
 //发送消息

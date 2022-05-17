@@ -71,9 +71,9 @@ func (this *sessionStore) addSession(name string, session Session) {
 	//	this.nameStore[session.GetName()] = session
 	//	this.lock.Unlock()
 
-	// netaddr := AddressNet([]byte(name))
+	netaddr := AddressNet([]byte(name))
+	Log.Info("add sessionid %s", netaddr.B58String())
 
-	// Log.Info("add sessionid %s", netaddr.B58String())
 	this.nameStore.Store(name, session)
 }
 

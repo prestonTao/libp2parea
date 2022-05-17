@@ -3,7 +3,7 @@ package transmission
 import (
 	"github.com/prestonTao/libp2parea/config"
 	"github.com/prestonTao/libp2parea/engine/crypto"
-	"github.com/prestonTao/libp2parea/utils"
+	"github.com/prestonTao/utils"
 	"bytes"
 	"encoding/hex"
 	"fmt"

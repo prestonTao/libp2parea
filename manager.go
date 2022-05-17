@@ -18,8 +18,8 @@ import (
 	_ "github.com/prestonTao/libp2parea/persistence"
 	"github.com/prestonTao/libp2parea/protos/go_protos"
 	"github.com/prestonTao/libp2parea/sqlite3_db"
-	"github.com/prestonTao/libp2parea/utils"
 	"github.com/prestonTao/libp2parea/virtual_node/manager"
+	"github.com/prestonTao/utils"
 )
 
 var (
@@ -121,19 +121,28 @@ func StartEngine(isFirst bool) bool {
 
 	//	engine.ListenByListener(config.TCPListener, true)
 	//占用本机一个端口
-	err := engine.Listen("0.0.0.0", uint32(config.Init_LocalPort), true)
-	if err != nil {
-		return false
-	} else {
-		//得到本机可用端口
-		config.Init_LocalPort = config.Init_LocalPort
-		if !config.Init_IsMapping {
-			nodeStore.NodeSelf.TcpPort = config.Init_LocalPort
-		}
+	var err error
+	for i := 0; i < 100; i++ {
+		//		fmt.Println(runtime.GOARCH, runtime.GOOS)
+		//		if runtime.GOOS == "windows" {
+		//			err = engine.Listen(config.Init_LocalIP, uint32(config.Init_LocalPort+uint16(i)), true)
+		//		} else {
+		//			err = engine.Listen("0.0.0.0", uint32(config.Init_LocalPort+uint16(i)), true)
+		//		}
+		err = engine.Listen("0.0.0.0", uint32(config.Init_LocalPort+uint16(i)), true)
+		if err != nil {
+			continue
+		} else {
+			//得到本机可用端口
+			config.Init_LocalPort = config.Init_LocalPort + uint16(i)
+			if !config.Init_IsMapping {
+				nodeStore.NodeSelf.TcpPort = config.Init_LocalPort
+			}
 
-		//加载超级节点ip地址
-		addrm.Init()
-		return true
+			//加载超级节点ip地址
+			addrm.Init()
+			return true
+		}
 	}
 
 	return false
@@ -248,6 +257,7 @@ func connectNet(ip string, port uint16) {
 
 	// mh := nodeStore.AddressFromB58String(session.GetName())
 	mh := nodeStore.AddressNet([]byte(session.GetName()))
+	engine.Log.Info("更换超级节点id:%s", mh.B58String())
 	nodeStore.SuperPeerId = &mh
 
 	// engine.Log.Debug("超级节点为: %s", nodeStore.SuperPeerId.B58String())
@@ -308,6 +318,7 @@ func closeConnCallback(name string) {
 			//启动定时重连机制
 
 		} else {
+			engine.Log.Info("更换超级节点id:%s", nearId.B58String())
 			nodeStore.SuperPeerId = nearId
 		}
 	}

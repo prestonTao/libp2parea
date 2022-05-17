@@ -3,7 +3,7 @@ package raft
 import (
 	"time"
 	cached "github.com/prestonTao/libp2parea/cache/cachedata"
-	"github.com/prestonTao/libp2parea/utils"
+	"github.com/prestonTao/utils"
 )
 
 func init() {

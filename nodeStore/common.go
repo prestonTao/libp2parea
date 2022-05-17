@@ -5,7 +5,7 @@ package nodeStore
 // 	"math/rand"
 // 	"time"
 // 	gconfig "github.com/prestonTao/libp2parea/config"
-// 	"github.com/prestonTao/libp2parea/utils"
+// 	"github.com/prestonTao/utils"
 // )
 
 //得到指定长度的节点id

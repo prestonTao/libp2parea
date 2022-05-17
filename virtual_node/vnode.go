@@ -3,7 +3,7 @@ package virtual_node
 import (
 	"github.com/prestonTao/libp2parea/config"
 	"github.com/prestonTao/libp2parea/nodeStore"
-	"github.com/prestonTao/libp2parea/utils"
+	"github.com/prestonTao/utils"
 	"github.com/prestonTao/libp2parea/protos/go_protos"
 	"bytes"
 	"sync"

@@ -1,10 +1,13 @@
 package nodeStore
 
 import (
-	"github.com/prestonTao/libp2parea/utils"
 	"bytes"
 	"math/big"
 	"sync"
+
+	"github.com/prestonTao/libp2parea/config"
+
+	"github.com/prestonTao/utils"
 )
 
 type Ids struct {
@@ -40,8 +43,11 @@ func (this *Ids) AddId(id []byte) (ok bool, removeIDs [][]byte) {
 		nearId := kl.Get(new(big.Int).SetBytes(*netIDs[i]))
 		//		fmt.Println(hex.EncodeToString(nearId[0].Bytes()))
 
+		nearIdBs := nearId[0].Bytes()
+		nearIdNewBs := utils.ComplementHighPositionZero(&nearIdBs, config.Addr_byte_length)
+
 		// if hex.EncodeToString(*one) == hex.EncodeToString(nearId[0].Bytes()) {
-		if bytes.Equal(one, nearId[0].Bytes()) {
+		if bytes.Equal(one, *nearIdNewBs) {
 			continue
 		}
 		//		fmt.Println("删除的节点id", i, one, "替换", node.IdInfo.Id)
@@ -93,8 +99,11 @@ func (this *Ids) RemoveId(id []byte) {
 		nearId := kl.Get(new(big.Int).SetBytes(*netIDs[i]))
 		// mhbs, _ := utils.Encode(nearId[1].Bytes(), gconfig.HashCode)
 		// idmh := utils.Multihash(mhbs)
-		idAddr := []byte(nearId[1].Bytes())
-		this.ids[i] = idAddr
+		idAddr := nearId[1].Bytes()
+
+		nearIdNewBs := utils.ComplementHighPositionZero(&idAddr, config.Addr_byte_length)
+
+		this.ids[i] = *nearIdNewBs
 
 		have = true
 	}

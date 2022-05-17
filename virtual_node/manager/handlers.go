@@ -6,7 +6,7 @@ import (
 	"github.com/prestonTao/libp2parea/message_center"
 	"github.com/prestonTao/libp2parea/message_center/flood"
 	"github.com/prestonTao/libp2parea/nodeStore"
-	"github.com/prestonTao/libp2parea/utils"
+	"github.com/prestonTao/utils"
 	"github.com/prestonTao/libp2parea/virtual_node"
 	"github.com/prestonTao/libp2parea/protos/go_protos"
 	"bytes"

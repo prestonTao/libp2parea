@@ -5,7 +5,7 @@ import (
 	// "fmt"
 	"github.com/prestonTao/libp2parea/engine"
 	mc "github.com/prestonTao/libp2parea/message_center"
-	"github.com/prestonTao/libp2parea/utils"
+	"github.com/prestonTao/utils"
 )
 
 func getMessage(id *utils.Multihash, content []byte) *mc.Mess {

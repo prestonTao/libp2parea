@@ -4,7 +4,7 @@ import (
 	"encoding/hex"
 	// "fmt"
 	"github.com/prestonTao/libp2parea/config"
-	"github.com/prestonTao/libp2parea/utils"
+	"github.com/prestonTao/utils"
 )
 
 var task = utils.NewTask(prosess)

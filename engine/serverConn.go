@@ -3,7 +3,6 @@ package engine
 import (
 	"errors"
 	"net"
-	"runtime"
 	"sync"
 	"time"
 )
@@ -112,7 +111,7 @@ func (this *ServerConn) loopSend() {
 		} else {
 			total = 0
 			// Log.Debug("conn send: %d %s %d %d\n%s", msgID, this.conn.RemoteAddr(), len(*buff), n, hex.EncodeToString(*buff))
-			// Log.Debug("client conn send: %d %s %d", msgID, this.conn.RemoteAddr(), len(*buff))
+			// Log.Debug("client conn send: %s %d", this.conn.RemoteAddr(), len(*buff))
 			// Log.Info("clent send %s", hex.EncodeToString(*buff))
 		}
 		if n < len(*buff) {
@@ -133,10 +132,10 @@ func (this *ServerConn) loopSend() {
 // }
 
 func (this *ServerConn) handlerProcess(handler MsgHandler, msg *Packet) {
-	goroutineId := GetRandomDomain() + TimeFormatToNanosecondStr()
-	_, file, line, _ := runtime.Caller(0)
-	AddRuntime(file, line, goroutineId)
-	defer DelRuntime(file, line, goroutineId)
+	// goroutineId := GetRandomDomain() + TimeFormatToNanosecondStr()
+	// _, file, line, _ := runtime.Caller(0)
+	// AddRuntime(file, line, goroutineId)
+	// defer DelRuntime(file, line, goroutineId)
 
 	//消息处理模块报错将不会引起宕机
 	defer PrintPanicStack()

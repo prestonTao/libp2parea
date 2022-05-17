@@ -5,7 +5,7 @@ import (
 	"github.com/prestonTao/libp2parea/message_center"
 	"github.com/prestonTao/libp2parea/message_center/flood"
 	"github.com/prestonTao/libp2parea/nodeStore"
-	"github.com/prestonTao/libp2parea/utils"
+	"github.com/prestonTao/utils"
 )
 
 func GetNodeMachineID(recvid *nodeStore.AddressNet) int64 {

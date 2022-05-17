@@ -1,28 +1,24 @@
 package manager
 
 import (
+	"bytes"
+
 	"github.com/prestonTao/libp2parea/config"
-	"github.com/prestonTao/libp2parea/engine"
 	"github.com/prestonTao/libp2parea/message_center"
 	"github.com/prestonTao/libp2parea/message_center/flood"
 	"github.com/prestonTao/libp2parea/nodeStore"
-	"github.com/prestonTao/libp2parea/utils"
 	"github.com/prestonTao/libp2parea/virtual_node"
-	"bytes"
-	"runtime"
-	// jsoniter "github.com/json-iterator/go"
+	"github.com/prestonTao/utils"
 )
-
-// var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 /*
 	查询邻居节点
 */
 func FindNearVnode() {
-	goroutineId := utils.GetRandomDomain() + utils.TimeFormatToNanosecondStr()
-	_, file, line, _ := runtime.Caller(0)
-	engine.AddRuntime(file, line, goroutineId)
-	defer engine.DelRuntime(file, line, goroutineId)
+	// goroutineId := utils.GetRandomDomain() + utils.TimeFormatToNanosecondStr()
+	// _, file, line, _ := runtime.Caller(0)
+	// engine.AddRuntime(file, line, goroutineId)
+	// defer engine.DelRuntime(file, line, goroutineId)
 	c := virtual_node.GetFindVnodeChan()
 
 	// engine.Log.Info("开始接收查询邻居节点消息信号")
@@ -81,10 +77,10 @@ func LoopGetVnodeinfo() {
 */
 func AddNewNode(addr nodeStore.AddressNet) {
 	utils.Go(func() {
-		goroutineId := utils.GetRandomDomain() + utils.TimeFormatToNanosecondStr()
-		_, file, line, _ := runtime.Caller(0)
-		engine.AddRuntime(file, line, goroutineId)
-		defer engine.DelRuntime(file, line, goroutineId)
+		// goroutineId := utils.GetRandomDomain() + utils.TimeFormatToNanosecondStr()
+		// _, file, line, _ := runtime.Caller(0)
+		// engine.AddRuntime(file, line, goroutineId)
+		// defer engine.DelRuntime(file, line, goroutineId)
 		//自己节点没开通虚拟节点，就不需要添加
 		if len(virtual_node.GetVnodeNumber()) <= 0 {
 			return

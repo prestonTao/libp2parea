@@ -2,7 +2,7 @@ package flood
 
 // import (
 // 	"github.com/prestonTao/libp2parea/config"
-// 	"github.com/prestonTao/libp2parea/utils"
+// 	"github.com/prestonTao/utils"
 // 	"sync"
 // 	"time"
 // )

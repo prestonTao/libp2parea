@@ -3,7 +3,6 @@ package message_center
 import (
 	"bytes"
 	"errors"
-	"runtime"
 	"sync"
 	"time"
 
@@ -13,7 +12,7 @@ import (
 	"github.com/prestonTao/libp2parea/nodeStore"
 	"github.com/prestonTao/libp2parea/protos/go_protos"
 	"github.com/prestonTao/libp2parea/sqlite3_db"
-	"github.com/prestonTao/libp2parea/utils"
+	"github.com/prestonTao/utils"
 
 	"github.com/gogo/protobuf/proto"
 )
@@ -163,10 +162,10 @@ func CreateMsgHolder(holder *MsgHolderOne) *MsgHolder {
 	同步新消息并广播给其他节点
 */
 func (this *MsgHolder) GetMulticastMsg() {
-	goroutineId := utils.GetRandomDomain() + utils.TimeFormatToNanosecondStr()
-	_, file, line, _ := runtime.Caller(0)
-	engine.AddRuntime(file, line, goroutineId)
-	defer engine.DelRuntime(file, line, goroutineId)
+	// goroutineId := utils.GetRandomDomain() + utils.TimeFormatToNanosecondStr()
+	// _, file, line, _ := runtime.Caller(0)
+	// engine.AddRuntime(file, line, goroutineId)
+	// defer engine.DelRuntime(file, line, goroutineId)
 
 	//循环从消息持有者同步消息
 	var messageProto *go_protos.MessageMulticast
@@ -252,10 +251,10 @@ func (this *MsgHolder) GetMulticastMsg() {
 	if nodeStore.NodeSelf.GetIsSuper() {
 		//广播给其他超级节点
 		utils.Go(func() {
-			goroutineId := utils.GetRandomDomain() + utils.TimeFormatToNanosecondStr()
-			_, file, line, _ := runtime.Caller(0)
-			engine.AddRuntime(file, line, goroutineId)
-			defer engine.DelRuntime(file, line, goroutineId)
+			// goroutineId := utils.GetRandomDomain() + utils.TimeFormatToNanosecondStr()
+			// _, file, line, _ := runtime.Caller(0)
+			// engine.AddRuntime(file, line, goroutineId)
+			// defer engine.DelRuntime(file, line, goroutineId)
 			//先发送给超级节点
 			// superNodes := nodeStore.GetIdsForFar(message.Head.SenderSuperId)
 			// whiltlistNodes := nodeStore.GetWhiltListNodes()

@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/prestonTao/keystore"
 	"github.com/prestonTao/libp2parea"
-
-	// "github.com/prestonTao/libp2parea/config"
 	"github.com/prestonTao/libp2parea/engine"
 	mc "github.com/prestonTao/libp2parea/message_center"
 	"github.com/prestonTao/libp2parea/nodeStore"
@@ -33,13 +33,29 @@ func start() {
 	//
 	// config.SetNetType(config.NetType_test)
 
+	engine.Netid = 554433
 	addr := "127.0.0.1"
 	port := uint16(29980)
 
+	// var port uint16
+	// fmt.Println("请输入一个端口号:")
+	// fmt.Scan(&port)
+	args := os.Args
+	if len(args) > 0 {
+		portStr := args[0]
+		portInt, err := strconv.Atoi(portStr)
+		if err != nil {
+			engine.Log.Info(err.Error())
+		} else {
+			port = uint16(portInt)
+		}
+	}
+
 	libp2parea.Start(true, addr, port, keyPath, addrPre, pwd)
 	InitHandler()
-	go sendMsg()
-	time.Sleep(time.Hour * 999999)
+	// go sendMsg()
+	// time.Sleep(time.Hour * 999999)
+	select {}
 }
 
 const msg_text = 1000

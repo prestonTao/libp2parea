@@ -1,7 +1,7 @@
 package raft
 
 import (
-	"github.com/prestonTao/libp2parea/utils"
+	"github.com/prestonTao/utils"
 	"sync"
 
 	jsoniter "github.com/json-iterator/go"

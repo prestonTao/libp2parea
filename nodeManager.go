@@ -14,8 +14,8 @@ import (
 	"github.com/prestonTao/libp2parea/nodeStore"
 	"github.com/prestonTao/libp2parea/protos/go_protos"
 	"github.com/prestonTao/libp2parea/sqlite3_db"
-	"github.com/prestonTao/libp2parea/utils"
 	"github.com/prestonTao/libp2parea/virtual_node/manager"
+	"github.com/prestonTao/utils"
 	// jsoniter "github.com/json-iterator/go"
 )
 
@@ -245,6 +245,7 @@ func MulticastOnline_recv(c engine.Controller, msg engine.Packet, message *messa
 		if bytes.Equal(*nearId, *nodeStore.SuperPeerId) {
 			return
 		}
+		engine.Log.Info("更换超级节点id:%s", nearId.B58String())
 		nodeStore.SuperPeerId = nearId
 		//		nodeStore.SuperPeerIdStr = hex.EncodeToString(nearId)
 		// fmt.Println("超级节点换为:", nodeStore.SuperPeerId.B58String())
@@ -433,6 +434,7 @@ func GetNearSuperAddr_recv(c engine.Controller, msg engine.Packet, message *mess
 			if bytes.Equal(*nearId, *nodeStore.SuperPeerId) {
 				continue
 			}
+			engine.Log.Info("更换超级节点id:%s", nearId.B58String())
 			nodeStore.SuperPeerId = nearId
 			//		nodeStore.SuperPeerIdStr = hex.EncodeToString(nearId)
 			// fmt.Println("超级节点换为:", nodeStore.SuperPeerId.B58String())

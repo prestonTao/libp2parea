@@ -1,7 +1,7 @@
 package nodeStore
 
 import (
-	"github.com/prestonTao/libp2parea/utils"
+	"github.com/prestonTao/utils"
 	"bytes"
 	"crypto/ecdsa"
 	"crypto/sha256"

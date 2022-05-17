@@ -12,7 +12,7 @@ import (
 	"github.com/prestonTao/libp2parea/nodeStore"
 	"github.com/prestonTao/libp2parea/protos/go_protos"
 	"github.com/prestonTao/libp2parea/sqlite3_db"
-	"github.com/prestonTao/libp2parea/utils"
+	"github.com/prestonTao/utils"
 )
 
 //消息协议版本号

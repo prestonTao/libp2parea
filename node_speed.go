@@ -2,7 +2,7 @@ package libp2parea
 
 import (
 	"github.com/prestonTao/libp2parea/nodeStore"
-	"github.com/prestonTao/libp2parea/utils"
+	"github.com/prestonTao/utils"
 	"sort"
 	"sync"
 	"time"

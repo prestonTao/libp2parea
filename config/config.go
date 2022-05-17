@@ -6,7 +6,7 @@ import (
 	"runtime"
 
 	"github.com/prestonTao/libp2parea/engine"
-	//	"github.com/prestonTao/libp2parea/utils"
+	//	"github.com/prestonTao/utils"
 )
 
 type NetModel uint8
@@ -36,6 +36,7 @@ const (
 	// NetType_test    = "test"    //测试网络，测试网络中，局域网中节点可以直接链接。
 
 	Mining_block_time = 10
+	Addr_byte_length  = 32
 
 	//---------------- base --------------------------
 	//	MSGID_Text = 101 //显示文本消息

@@ -12,7 +12,7 @@ import (
 	"github.com/prestonTao/keystore"
 	"github.com/prestonTao/libp2parea/config"
 	"github.com/prestonTao/libp2parea/engine"
-	"github.com/prestonTao/libp2parea/utils"
+	"github.com/prestonTao/utils"
 )
 
 type NodeClass int
@@ -501,6 +501,8 @@ func FindNearInSuper(nodeId, outId *AddressNet, includeSelf bool) *AddressNet {
 		if outId != nil && bytes.Equal(one.IdInfo.Id, *outId) {
 			continue
 		}
+		engine.Log.Info("检查id:%s %v", one.IdInfo.Id.B58String(), one.IdInfo.Id)
+
 		kl.Add(new(big.Int).SetBytes(one.IdInfo.Id))
 	}
 	nodesLock.RUnlock()
@@ -522,7 +524,11 @@ func FindNearInSuper(nodeId, outId *AddressNet, includeSelf bool) *AddressNet {
 	if targetId == nil {
 		return nil
 	}
-	mh := AddressNet(targetId.Bytes())
+
+	targetIdBs := targetId.Bytes()
+	mh := AddressNet(*utils.ComplementHighPositionZero(&targetIdBs, config.Addr_byte_length))
+	// mh := AddressNet(targetId.Bytes())
+	engine.Log.Info("检查id结果:%s %v", mh.B58String(), targetId.Bytes())
 	return &mh
 }
 
@@ -581,7 +587,9 @@ func FindNearNodeId(nodeId, outId *AddressNet, includeSelf bool) *AddressNet {
 	if targetId == nil {
 		return nil
 	}
-	mh := AddressNet(targetId.Bytes())
+	targetIdBs := targetId.Bytes()
+	mh := AddressNet(*utils.ComplementHighPositionZero(&targetIdBs, config.Addr_byte_length))
+	// mh := AddressNet(targetId.Bytes())
 	return &mh
 }
 
@@ -981,9 +989,11 @@ func GetIdsForFar(id *AddressNet) []AddressNet {
 	out := make([]AddressNet, 0)
 	find := false
 	for _, one := range list {
+		oneBs := one.Bytes()
+		oneNewBs := utils.ComplementHighPositionZero(&oneBs, config.Addr_byte_length)
 
 		// if hex.EncodeToString(one.Bytes()) == hex.EncodeToString(NodeSelf.IdInfo.Id.Data()) {
-		if bytes.Equal(one.Bytes(), NodeSelf.IdInfo.Id) {
+		if bytes.Equal(*oneNewBs, NodeSelf.IdInfo.Id) {
 			find = true
 		} else {
 			if find {
@@ -993,7 +1003,7 @@ func GetIdsForFar(id *AddressNet) []AddressNet {
 				// 	continue
 				// }
 				// mh := utils.Multihash(bs)
-				mh := AddressNet(one.Bytes())
+				mh := AddressNet(*oneNewBs)
 				out = append(out, mh)
 			}
 		}

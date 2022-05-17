@@ -1,9 +1,12 @@
 package virtual_node
 
 import (
-	"github.com/prestonTao/libp2parea/nodeStore"
-	"github.com/prestonTao/libp2parea/utils"
 	"math/big"
+
+	"github.com/prestonTao/libp2parea/config"
+
+	"github.com/prestonTao/libp2parea/nodeStore"
+	"github.com/prestonTao/utils"
 )
 
 /*
@@ -67,7 +70,8 @@ func FindNearVnode(nodeId, outId *AddressNetExtend, includeSelf bool) AddressNet
 	if targetId == nil {
 		return nil
 	}
-	mh := AddressNetExtend(targetId.Bytes())
+	targetIdBs := targetId.Bytes()
+	mh := AddressNetExtend(*utils.ComplementHighPositionZero(&targetIdBs, config.Addr_byte_length))
 	return mh
 }
 
@@ -92,6 +96,10 @@ func FindNearVnodeInSelf(nodeId *AddressNetExtend) *AddressNetExtend {
 	if targetId == nil {
 		return nil
 	}
-	mh := AddressNetExtend(targetId.Bytes())
+
+	targetIdBs := targetId.Bytes()
+	mh := AddressNetExtend(*utils.ComplementHighPositionZero(&targetIdBs, config.Addr_byte_length))
+
+	// mh := AddressNetExtend(targetId.Bytes())
 	return &mh
 }

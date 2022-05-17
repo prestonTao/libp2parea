@@ -1,7 +1,7 @@
 package node_shadow
 
 import (
-	"github.com/prestonTao/libp2parea/utils/base58"
+	"github.com/prestonTao/utils/base58"
 	"bytes"
 	"crypto/sha256"
 )

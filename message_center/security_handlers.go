@@ -9,7 +9,7 @@ import (
 	"github.com/prestonTao/libp2parea/message_center/flood"
 	"github.com/prestonTao/libp2parea/nodeStore"
 	"github.com/prestonTao/libp2parea/protos/go_protos"
-	"github.com/prestonTao/libp2parea/utils"
+	"github.com/prestonTao/utils"
 )
 
 /*
