@@ -371,7 +371,7 @@ var debuf_msgid uint64 = 0
 /*
 	检查该消息是否是自己的
 	不是自己的则自动转发出去
-	@safe 安全协议使用
+	@return    bool    是否发送给自己的，true=成功发送给其他人;false=发送给自己;
 */
 func (this *Message) Send(version uint64) (ok bool) {
 	// defer fmt.Println("------------", version, this.Body.MessageId, this.Head)

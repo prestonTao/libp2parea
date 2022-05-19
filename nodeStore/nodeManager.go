@@ -526,7 +526,7 @@ func FindNearInSuper(nodeId, outId *AddressNet, includeSelf bool) *AddressNet {
 	}
 
 	targetIdBs := targetId.Bytes()
-	mh := AddressNet(*utils.ComplementHighPositionZero(&targetIdBs, config.Addr_byte_length))
+	mh := AddressNet(*utils.FullHighPositionZero(&targetIdBs, config.Addr_byte_length))
 	// mh := AddressNet(targetId.Bytes())
 	engine.Log.Info("检查id结果:%s %v", mh.B58String(), targetId.Bytes())
 	return &mh
@@ -588,7 +588,7 @@ func FindNearNodeId(nodeId, outId *AddressNet, includeSelf bool) *AddressNet {
 		return nil
 	}
 	targetIdBs := targetId.Bytes()
-	mh := AddressNet(*utils.ComplementHighPositionZero(&targetIdBs, config.Addr_byte_length))
+	mh := AddressNet(*utils.FullHighPositionZero(&targetIdBs, config.Addr_byte_length))
 	// mh := AddressNet(targetId.Bytes())
 	return &mh
 }
@@ -990,7 +990,7 @@ func GetIdsForFar(id *AddressNet) []AddressNet {
 	find := false
 	for _, one := range list {
 		oneBs := one.Bytes()
-		oneNewBs := utils.ComplementHighPositionZero(&oneBs, config.Addr_byte_length)
+		oneNewBs := utils.FullHighPositionZero(&oneBs, config.Addr_byte_length)
 
 		// if hex.EncodeToString(one.Bytes()) == hex.EncodeToString(NodeSelf.IdInfo.Id.Data()) {
 		if bytes.Equal(*oneNewBs, NodeSelf.IdInfo.Id) {

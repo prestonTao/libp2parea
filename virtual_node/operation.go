@@ -71,7 +71,7 @@ func FindNearVnode(nodeId, outId *AddressNetExtend, includeSelf bool) AddressNet
 		return nil
 	}
 	targetIdBs := targetId.Bytes()
-	mh := AddressNetExtend(*utils.ComplementHighPositionZero(&targetIdBs, config.Addr_byte_length))
+	mh := AddressNetExtend(*utils.FullHighPositionZero(&targetIdBs, config.Addr_byte_length))
 	return mh
 }
 
@@ -98,8 +98,6 @@ func FindNearVnodeInSelf(nodeId *AddressNetExtend) *AddressNetExtend {
 	}
 
 	targetIdBs := targetId.Bytes()
-	mh := AddressNetExtend(*utils.ComplementHighPositionZero(&targetIdBs, config.Addr_byte_length))
-
-	// mh := AddressNetExtend(targetId.Bytes())
+	mh := AddressNetExtend(*utils.FullHighPositionZero(&targetIdBs, config.Addr_byte_length))
 	return &mh
 }

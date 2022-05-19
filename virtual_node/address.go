@@ -6,6 +6,8 @@ import (
 	"encoding/binary"
 	"math/big"
 
+	"github.com/prestonTao/utils"
+
 	"github.com/prestonTao/keystore/base58"
 	"github.com/prestonTao/libp2parea/nodeStore"
 )
@@ -59,15 +61,13 @@ func CheckPukAddr(addr nodeStore.AddressNet, index uint64, addrEx AddressNetExte
 	@return 4分之一节点
 */
 func GetQuarterLogicAddrNetByAddrNetExtend(id *AddressNetExtend) (logicIds []*AddressNetExtend) {
-
 	logicIds = make([]*AddressNetExtend, 0)
 	logicIds = append(logicIds, id)
 	idInt := new(big.Int).SetBytes(*id)
 	for _, one := range nodeStore.Number_quarter {
 		bs := new(big.Int).Xor(idInt, one).Bytes()
-		// mhbs, _ := utils.Encode(bs, config.HashCode)
-		// mh := utils.Multihash(mhbs)
-		mh := AddressNetExtend(bs)
+		newbs := utils.FullHighPositionZero(&bs, 32)
+		mh := AddressNetExtend(*newbs)
 		logicIds = append(logicIds, &mh)
 	}
 	return

@@ -1,6 +1,7 @@
 package nodeStore
 
 import (
+	"github.com/prestonTao/utils"
 	// "github.com/prestonTao/libp2parea/config"
 	// "github.com/prestonTao/utils"
 	"math/big"
@@ -33,7 +34,7 @@ func init() {
 //初始节点数据
 //@num 几分之一 值为16，则为十六分之一
 func initData(num int) []*big.Int {
-	number_interval := make([]*big.Int, 0)
+	number_interval := make([]*big.Int, 0, num-1)
 	Number_max, ok := new(big.Int).SetString(Str_maxNumber, 16)
 	if !ok {
 		panic("id string format error")
@@ -90,15 +91,13 @@ func initData(num int) []*big.Int {
 	@return 4分之一节点
 */
 func GetQuarterLogicAddrNetByAddrNet(id *AddressNet) (logicIds []*AddressNet) {
-
-	logicIds = make([]*AddressNet, 0)
+	logicIds = make([]*AddressNet, 0, 4)
 	logicIds = append(logicIds, id)
 	idInt := new(big.Int).SetBytes(*id)
 	for _, one := range Number_quarter {
 		bs := new(big.Int).Xor(idInt, one).Bytes()
-		// mhbs, _ := utils.Encode(bs, config.HashCode)
-		// mh := utils.Multihash(mhbs)
-		mh := AddressNet(bs)
+		newbs := utils.FullHighPositionZero(&bs, 32)
+		mh := AddressNet(*newbs)
 		logicIds = append(logicIds, &mh)
 	}
 	return

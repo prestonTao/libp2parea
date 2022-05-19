@@ -44,7 +44,7 @@ func (this *Ids) AddId(id []byte) (ok bool, removeIDs [][]byte) {
 		//		fmt.Println(hex.EncodeToString(nearId[0].Bytes()))
 
 		nearIdBs := nearId[0].Bytes()
-		nearIdNewBs := utils.ComplementHighPositionZero(&nearIdBs, config.Addr_byte_length)
+		nearIdNewBs := utils.FullHighPositionZero(&nearIdBs, config.Addr_byte_length)
 
 		// if hex.EncodeToString(*one) == hex.EncodeToString(nearId[0].Bytes()) {
 		if bytes.Equal(one, *nearIdNewBs) {
@@ -101,7 +101,7 @@ func (this *Ids) RemoveId(id []byte) {
 		// idmh := utils.Multihash(mhbs)
 		idAddr := nearId[1].Bytes()
 
-		nearIdNewBs := utils.ComplementHighPositionZero(&idAddr, config.Addr_byte_length)
+		nearIdNewBs := utils.FullHighPositionZero(&idAddr, config.Addr_byte_length)
 
 		this.ids[i] = *nearIdNewBs
 

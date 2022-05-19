@@ -2,7 +2,7 @@ module github.com/prestonTao/libp2parea
 
 go 1.18
 
-// replace github.com/prestonTao/utils => ../utils
+replace github.com/prestonTao/utils => ../utils
 
 require (
 	github.com/astaxie/beego v1.12.3
@@ -13,11 +13,11 @@ require (
 	github.com/json-iterator/go v1.1.12
 	github.com/logoove/sqlite v1.15.3
 	github.com/monnand/dhkx v0.0.0-20180522003156-9e5b033f1ac4
-	github.com/prestonTao/keystore v0.0.0-20220429011851-9db77f1a6280
-	github.com/prestonTao/utils v0.0.0-20220517065227-0040d98ebbcc
+	github.com/prestonTao/keystore v0.0.0-20220518074257-aa1ed9263f0e
+	github.com/prestonTao/utils v0.0.0-20220517073115-06a4120f1fc7
 	github.com/satori/go.uuid v1.2.0
 	github.com/stretchr/testify v1.7.1
-	golang.org/x/crypto v0.0.0-20220517005047-85d78b3ac167
+	golang.org/x/crypto v0.0.0-20220518034528-6f7dac969898
 	gopkg.in/eapache/queue.v1 v1.1.0
 )
 

@@ -16,10 +16,7 @@ import (
 	"github.com/prestonTao/libp2parea/sqlite3_db"
 	"github.com/prestonTao/libp2parea/virtual_node"
 	"github.com/prestonTao/utils"
-	// jsoniter "github.com/json-iterator/go"
 )
-
-// var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 var router = NewRouter()
 
@@ -566,12 +563,14 @@ func Register_search_super(msgid uint64, handler MsgHandler) {
 
 /*
 	发送一个新的查找超级节点消息
+	@return    bool    是否发送成功:true=发送成功;false=发送失败;
 */
 func SendSearchSuperMsg(msgid uint64, recvid *nodeStore.AddressNet, content *[]byte) (*Message, bool) {
 	mhead := NewMessageHead(recvid, recvid, false)
 	mbody := NewMessageBody(msgid, content, 0, nil, 0)
 	message := NewMessage(mhead, mbody)
 	message.BuildHash()
+
 	return message, message.Send(version_search_super)
 }
 
