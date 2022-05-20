@@ -2,7 +2,6 @@ package config
 
 import (
 	"errors"
-	"path/filepath"
 	"runtime"
 
 	"github.com/prestonTao/libp2parea/engine"
@@ -26,9 +25,9 @@ const (
 	Version_0 = 0 //
 	Version_1 = 1 //此版本广播消息机制发生改变，只广播消息hash，节点自己去同步消息到本地
 
-	Path_configDir = "conf"         //配置文件存放目录
-	SQLITE3DB_name = "sqlite3.db"   //sqlite3数据库文件名称
-	Core_keystore  = "keystore.key" //密钥文件
+	Path_configDir = "conf"               //配置文件存放目录
+	SQLITE3DB_name = "p2pmessagecache.db" //sqlite3数据库文件名称
+	Core_keystore  = "keystore.key"       //密钥文件
 
 	SQL_SHOW = false //是否打印sql语句
 
@@ -70,7 +69,7 @@ const (
 )
 
 var (
-	SQLITE3DB_path = filepath.Join(Path_configDir, SQLITE3DB_name) //sqlite3数据库文件保存路径
+	SQLITE3DB_path = SQLITE3DB_name //sqlite3数据库文件保存路径
 
 	AddrPre                     = "TEST"
 	Wallet_keystore_default_pwd = "123456789"

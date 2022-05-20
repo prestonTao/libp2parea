@@ -82,6 +82,9 @@ func Start(isFirst bool, addr string, port uint16, keyPath, addrPre, pwd string)
 	config.Init_LocalPort = port
 	nodeStore.NodeSelf.Addr = addr
 	nodeStore.NodeSelf.TcpPort = port
+	//初始化数据库
+	sqlite3_db.Init()
+
 	errInt := nodeStore.InitNodeStore(keyPath, addrPre, pwd)
 	if errInt == 1 {
 		panic("password fail")
