@@ -89,7 +89,7 @@ func smartLoadAddr() {
 	添加一个地址
 */
 func AddSuperPeerAddr(addr string) {
-	// engine.Log.Info("添加一个超级节点地址 %s", addr)
+	engine.Log.Info("添加一个超级节点地址 %s 网络类型:%s", addr, gconfig.NetType)
 	//检查是否重复
 	// if _, ok := Sys_superNodeEntry[addr]; ok {
 	// 	return
