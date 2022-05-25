@@ -327,9 +327,14 @@ func (this *Message) Proto() ([]byte, error) {
 	return message.Marshal()
 }
 func (this *Message) BuildHash() {
+	if this.Body.Hash != nil && len(this.Body.Hash) > 0 {
+		return
+	}
 	this.Body.ReplyHash = nil
 	this.Body.Hash = nil
-	this.Body.SendRand = utils.GetAccNumber()
+	if this.Body.SendRand == 0 {
+		this.Body.SendRand = utils.GetAccNumber()
+	}
 	this.Body.RecvRand = 0
 	// this.Body.CreateTime = utils.TimeFormatToNanosecond()
 	// bs, _ := json.Marshal(this)
@@ -344,6 +349,9 @@ func (this *Message) BuildHash() {
 	//	this.Hash = hex.EncodeToString(hash.Sum(nil))
 }
 func (this *Message) BuildReplyHash(createtime uint64, sendhash []byte, sendrand uint64) {
+	if this.Body.ReplyHash != nil && len(this.Body.ReplyHash) > 0 {
+		return
+	}
 	this.Body.CreateTime = createtime
 	this.Body.Hash = sendhash
 	this.Body.SendRand = sendrand
@@ -351,7 +359,9 @@ func (this *Message) BuildReplyHash(createtime uint64, sendhash []byte, sendrand
 	// this.Body.RecvRand = utils.GetAccNumber()
 	// this.Body.ReplyTime = utils.TimeFormatToNanosecond()
 	// bs, _ := json.Marshal(this)
-	this.Body.RecvRand = utils.GetAccNumber()
+	if this.Body.RecvRand == 0 {
+		this.Body.RecvRand = utils.GetAccNumber()
+	}
 	this.Body.ReplyTime = uint64(time.Now().Unix()) //utils.TimeFormatToNanosecond()
 	bs, _ := this.Proto()                           // json.Marshal(this)
 	// hash := sha1.New()
@@ -420,7 +430,10 @@ func (this *Message) Send(version uint64) (ok bool) {
 */
 func (this *Message) sendNormal(version uint64) bool {
 	//安全协议不需buildhash
+	// engine.Log.Info("buildhash befor:%s %+v", hex.EncodeToString(this.Body.Hash), this.Body)
 	this.BuildHash()
+	// engine.Log.Info("buildhash after:%s %+v", hex.EncodeToString(this.Body.Hash), this.Body)
+
 	if nodeStore.NodeSelf.GetIsSuper() {
 		// if version == debuf_msgid {
 		// 	fmt.Println("-=-=- 111111111111")
@@ -804,7 +817,9 @@ func (this *Message) Reply(version uint64) bool {
 	if nodeStore.NodeSelf.GetIsSuper() {
 		// return IsSendToOtherSuperToo(this.Head, this.Body.JSON(), version, nil)
 		mbodyBs := this.Body.Proto()
-		return IsSendToOtherSuperToo(this.Head, &mbodyBs, version, nil)
+		ok := IsSendToOtherSuperToo(this.Head, &mbodyBs, version, nil)
+		// engine.Log.Info("Reply IsSendToOtherSuperToo:%t", ok)
+		return ok
 	} else {
 		if nodeStore.SuperPeerId == nil {
 			// fmt.Println("没有可用的超级节点")

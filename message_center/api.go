@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/prestonTao/keystore"
 	"github.com/prestonTao/keystore/crypto"
@@ -563,15 +564,37 @@ func Register_search_super(msgid uint64, handler MsgHandler) {
 
 /*
 	发送一个新的查找超级节点消息
-	@return    bool    是否发送成功:true=发送成功;false=发送失败;
+	@return    bool    是否发送给其他节点:true=发送给其他节点;false=发送给自己;
 */
 func SendSearchSuperMsg(msgid uint64, recvid *nodeStore.AddressNet, content *[]byte) (*Message, bool) {
 	mhead := NewMessageHead(recvid, recvid, false)
 	mbody := NewMessageBody(msgid, content, 0, nil, 0)
 	message := NewMessage(mhead, mbody)
 	message.BuildHash()
+	if !message.Send(version_search_super) {
+		magneticSelf(message)
+	}
+	return message, true
+}
 
-	return message, message.Send(version_search_super)
+/*
+	发送一个新的查找超级节点消息
+	@return    bool    是否发送给其他节点:true=发送给其他节点;false=发送给自己;
+*/
+func SendSearchSuperMsgWaitRequest(msgid uint64, recvid *nodeStore.AddressNet, content *[]byte, timeout time.Duration) (*[]byte, error) {
+	mhead := NewMessageHead(recvid, recvid, false)
+	mbody := NewMessageBody(msgid, content, 0, nil, 0)
+	message := NewMessage(mhead, mbody)
+
+	message.BuildHash()
+	// engine.Log.Info("build hash 之前:%+v", message.Body)
+
+	flood.RegisterRequest(utils.Bytes2string(message.Body.Hash))
+	if !message.Send(version_search_super) {
+		magneticSelf(message)
+	}
+	return flood.WaitResponse(utils.Bytes2string(message.Body.Hash), timeout)
+	// return message, true
 }
 
 /*
@@ -597,7 +620,11 @@ func SendSearchAllMsg(msgid uint64, recvid *nodeStore.AddressNet, content *[]byt
 	mbody := NewMessageBody(msgid, content, 0, nil, 0)
 	message := NewMessage(mhead, mbody)
 	message.BuildHash()
-	return message, message.Send(version_search_all)
+	if !message.Send(version_search_all) {
+		magneticSelf(message)
+	}
+
+	return message, true
 }
 
 /*
@@ -630,9 +657,11 @@ func SendP2pMsg(msgid uint64, recvid *nodeStore.AddressNet, content *[]byte) (*M
 	body := NewMessageBody(msgid, content, 0, nil, 0)
 	message := NewMessage(head, body)
 	message.BuildHash()
-	ok := message.Send(version_p2p)
+	if !message.Send(version_p2p) {
+		magneticSelf(message)
+	}
 	// engine.Log.Info("发送未加密消息 2222222222222 msgid:%d ok:%t", msgid, ok)
-	return message, ok, false
+	return message, true, false
 }
 
 /*
@@ -645,8 +674,10 @@ func SendP2pMsgEX(msgid uint64, recvid, recvSuperId *nodeStore.AddressNet, conte
 	body := NewMessageBody(msgid, content, 0, nil, 0)
 	message := NewMessage(head, body)
 	message.BuildHash()
-	ok := message.Send(version_p2p)
-	return message, ok
+	if !message.Send(version_p2p) {
+		magneticSelf(message)
+	}
+	return message, true
 }
 
 /*
@@ -658,7 +689,10 @@ func SendP2pReplyMsg(message *Message, msgid uint64, content *[]byte) bool {
 	newmessage := NewMessage(mhead, mbody)
 	// message.BuildHash()
 	newmessage.BuildReplyHash(message.Body.CreateTime, message.Body.Hash, message.Body.SendRand)
-	return newmessage.Reply(version_p2p)
+	if !newmessage.Reply(version_p2p) {
+		magneticSelf(newmessage)
+	}
+	return true
 }
 
 /*
@@ -827,9 +861,11 @@ func SendP2pMsgHE(msgid uint64, recvid *nodeStore.AddressNet, content *[]byte) (
 	body := NewMessageBody(msgid, &bs, 0, nil, 0)
 	message := NewMessage(head, body)
 	message.BuildHash()
-	ok = message.Send(version_p2pHE)
+	if !message.Send(version_p2pHE) {
+		magneticSelf(message)
+	}
 	// engine.Log.Info("============ 发送加密消息 33333333333")
-	return message, ok, false
+	return message, true, false
 }
 
 /*
@@ -840,7 +876,10 @@ func SendP2pReplyMsgHE(message *Message, msgid uint64, content *[]byte) bool {
 	mbody := NewMessageBody(msgid, content, message.Body.CreateTime, message.Body.Hash, message.Body.SendRand)
 	newmessage := NewMessage(mhead, mbody)
 	newmessage.BuildReplyHash(message.Body.CreateTime, message.Body.Hash, message.Body.SendRand)
-	return newmessage.Reply(version_p2p)
+	if !newmessage.Reply(version_p2p) {
+		magneticSelf(newmessage)
+	}
+	return true
 }
 
 /*
@@ -860,8 +899,10 @@ func SendVnodeSearchMsg(msgid uint64, sendVnodeid, recvVnodeid *virtual_node.Add
 	mhead := NewMessageHeadVnode(sendVnodeid, recvVnodeid, false)
 	mbody := NewMessageBody(msgid, content, 0, nil, 0)
 	message := NewMessage(mhead, mbody)
-	ok := message.Send(version_vnode_search)
-	return message, ok
+	if !message.Send(version_vnode_search) {
+		magneticSelf(message)
+	}
+	return message, true
 }
 
 /*
@@ -888,8 +929,10 @@ func SendVnodeP2pMsgHE(msgid uint64, sendVnodeid, recvVnodeid *virtual_node.Addr
 	mhead := NewMessageHeadVnode(sendVnodeid, recvVnodeid, true)
 	mbody := NewMessageBody(msgid, content, 0, nil, 0)
 	message := NewMessage(mhead, mbody)
-	ok := message.Send(version_vnode_p2pHE)
-	return message, ok
+	if !message.Send(version_vnode_p2pHE) {
+		magneticSelf(message)
+	}
+	return message, true
 }
 
 /*
@@ -905,4 +948,19 @@ func SendVnodeP2pReplyMsgHE(message *Message, msgid uint64, content *[]byte, ses
 	mheadBs := head.Proto()
 	mbodyBs := body.Proto()
 	return session.Send(version_vnode_p2pHE, &mheadBs, &mbodyBs, false)
+}
+
+/*
+	自己处理此方法
+*/
+func magneticSelf(message *Message) {
+	// engine.Log.Info("执行磁力到自己节点的方法")
+	//自己处理
+	h := router.GetHandler(message.Body.MessageId)
+	if h == nil {
+		engine.Log.Info("This broadcast message is not registered:", message.Body.MessageId)
+	}
+	// engine.Log.Info("有广播消息，消息编号 %d", message.Body.MessageId)
+	//TODO 这里获取不到控制器了,因此传空
+	h(nil, engine.Packet{}, message)
 }

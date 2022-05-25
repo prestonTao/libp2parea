@@ -501,7 +501,7 @@ func FindNearInSuper(nodeId, outId *AddressNet, includeSelf bool) *AddressNet {
 		if outId != nil && bytes.Equal(one.IdInfo.Id, *outId) {
 			continue
 		}
-		engine.Log.Info("检查id:%s %v", one.IdInfo.Id.B58String(), one.IdInfo.Id)
+		// engine.Log.Info("检查id:%s %v", one.IdInfo.Id.B58String(), one.IdInfo.Id)
 
 		kl.Add(new(big.Int).SetBytes(one.IdInfo.Id))
 	}
@@ -528,7 +528,7 @@ func FindNearInSuper(nodeId, outId *AddressNet, includeSelf bool) *AddressNet {
 	targetIdBs := targetId.Bytes()
 	mh := AddressNet(*utils.FullHighPositionZero(&targetIdBs, config.Addr_byte_length))
 	// mh := AddressNet(targetId.Bytes())
-	engine.Log.Info("检查id结果:%s %v", mh.B58String(), targetId.Bytes())
+	// engine.Log.Info("检查id结果:%s %v", mh.B58String(), targetId.Bytes())
 	return &mh
 }
 

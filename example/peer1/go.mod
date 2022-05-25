@@ -2,15 +2,11 @@ module peer1
 
 go 1.18
 
-replace github.com/prestonTao/keystore => ../../../keystore
-
-replace github.com/prestonTao/libp2parea => ../../
-
 replace github.com/prestonTao/utils => ../../../utils
 
 require (
-	github.com/prestonTao/keystore v0.0.0-20220429011851-9db77f1a6280
-	github.com/prestonTao/libp2parea v0.0.0-00010101000000-000000000000
+	github.com/prestonTao/keystore v0.0.0-20220518074257-aa1ed9263f0e
+	github.com/prestonTao/libp2parea v0.0.0-20220520071624-dca417a71131
 )
 
 require (
@@ -29,12 +25,13 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/mr-tron/base58 v1.2.0 // indirect
-	github.com/prestonTao/utils v0.0.0-00010101000000-000000000000 // indirect
+	github.com/prestonTao/libp2parea/protos/go_protos v0.0.0-20220520071624-dca417a71131 // indirect
+	github.com/prestonTao/utils v0.0.0-20220517073115-06a4120f1fc7 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
 	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/shiena/ansicolor v0.0.0-20151119151921-a422bbe96644 // indirect
 	github.com/syndtr/goleveldb v1.0.0 // indirect
-	golang.org/x/crypto v0.0.0-20220511200225-c6db032c6c88 // indirect
+	golang.org/x/crypto v0.0.0-20220518034528-6f7dac969898 // indirect
 	golang.org/x/mod v0.3.0 // indirect
 	golang.org/x/sys v0.0.0-20211007075335-d3039528d8ac // indirect
 	golang.org/x/tools v0.0.0-20210106214847-113979e3529a // indirect
